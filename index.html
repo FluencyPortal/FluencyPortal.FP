@@ -81,17 +81,41 @@
         }
         .badge-teacher { background: #ffd166; color: #0f172a; }
         .badge-student { background: #00b4d8; color: #0f172a; }
-        /* TEACHER CONTROLS PANEL */
+        
+        /* TEACHER DROPDOWN PANEL */
         .teacher-panel {
             display: none;
-            background: rgba(255, 209, 102, 0.1);
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .btn-teacher-toggle {
+            background: rgba(255, 209, 102, 0.15);
+            color: var(--accent-yellow);
             border: 1px dashed var(--accent-yellow);
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+        .btn-teacher-toggle:hover {
+            background: rgba(255, 209, 102, 0.25);
+        }
+        .teacher-tools-menu {
+            display: none;
+            background: var(--card-bg);
+            border: 1px solid var(--accent-yellow);
             border-radius: 12px;
             padding: 15px;
-            margin-bottom: 20px;
+            margin-top: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            gap: 10px;
+            flex-wrap: wrap;
         }
-        .teacher-panel h4 { color: var(--accent-yellow); margin-bottom: 10px; font-size: 0.95rem; }
-        .teacher-tools { display: flex; gap: 10px; flex-wrap: wrap; }
         .btn-teacher {
             background: var(--accent-yellow); color: #0f172a;
             padding: 8px 14px; border: none; border-radius: 6px;
@@ -280,15 +304,19 @@
             </div>
             <button class="btn-logout" id="btnLogout">Logout</button>
         </div>
-        <!-- TEACHER CONTROL PANEL (VISIBLE TO TEACHER ONLY) -->
+        
+        <!-- TEACHER CONTROL PANEL DROPDOWN -->
         <div class="teacher-panel" id="teacherPanel">
-            <h4>👑 Teacher Control Panel</h4>
-            <div class="teacher-tools">
+            <button class="btn-teacher-toggle" onclick="toggleTeacherTools()">
+                👑 Teacher Tools ▾
+            </button>
+            <div class="teacher-tools-menu" id="teacherToolsMenu">
                 <button class="btn-teacher" onclick="alert('Feature: Add New Slide')">➕ Add New Slide</button>
                 <button class="btn-teacher" onclick="alert('Feature: Manage Homework / Audio Recordings')">🎙️ View Student Audio Records</button>
                 <button class="btn-teacher" onclick="alert('Feature: Edit Schedule')">📅 Update Schedule</button>
             </div>
         </div>
+
         <!-- WEEKS SELECTOR + FULL CALENDAR TAB -->
         <div class="weeks-container">
             <button class="week-btn active" onclick="switchWeek(1, this)">🗓️ Week 1</button>
@@ -670,7 +698,8 @@
       import { getStorage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
       // Firebase Config
       const firebaseConfig = {
-  apiKey: "AIzaSyB7EqAxiFrVlF5gXuOr2l9-0jMcLtDp1Tg",        authDomain: "fluency-portal-fe8b8.firebaseapp.com",
+        apiKey: "AIzaSyB7EqAxiFrVlF5gXuOr2l9-0jMcLtDp1Tg",
+        authDomain: "fluency-portal-fe8b8.firebaseapp.com",
         projectId: "fluency-portal-fe8b8",
         storageBucket: "fluency-portal-fe8b8.firebasestorage.app",
         messagingSenderId: "885170185327",
@@ -749,11 +778,15 @@
                 badge.className = "user-badge badge-teacher";
                 teacherPanel.style.display = 'block';
             } else {
-                badge.textContent = "🎓 Student";
+                badge.textContent = "🎓 Learner";
                 badge.className = "user-badge badge-student";
                 teacherPanel.style.display = 'none';
             }
             updateSlideUI(1);
+        }
+        function toggleTeacherTools() {
+            const menu = document.getElementById('teacherToolsMenu');
+            menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
         }
         function showLoginScreen() {
             document.getElementById('loginCard').style.display = 'block';
