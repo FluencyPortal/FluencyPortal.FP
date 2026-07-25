@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Souhaila's Fluency Portal | Student Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #05161a;
+            --card-bg: #0c2d34;
+            --accent-blue: #00b4d8;
+            --accent-green: #52b788;
+            --accent-yellow: #ffd166;
+            --text-main: #edf2f4;
+            --text-muted: #8d99ae;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            direction: ltr;
+            text-align: left;
+        }
+        /* LOGIN CARD */
+        .login-card {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .login-card h2 { color: var(--accent-blue); margin-bottom: 8px; }
+        .login-card p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px; }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; }
+        .input-group input {
+            width: 100%; padding: 12px; border-radius: 8px;
+            border: 1px solid #334155; background: #0f172a; color: #fff;
+            outline: none; font-size: 1rem;
+        }
+        .btn-login {
+            width: 100%; padding: 12px; background: var(--accent-blue);
+            color: #0f172a; border: none; border-radius: 8px;
+            font-weight: 700; font-size: 1rem; cursor: pointer;
+            transition: 0.2s; margin-top: 10px;
+        }
+        .btn-login:hover { opacity: 0.9; }
+        .error-msg { color: #ef4444; font-size: 0.85rem; margin-top: 10px; display: none; }
+        
+        /* DASHBOARD MAIN */
+        .dashboard { display: none; width: 100%; max-width: 950px; text-align: left; }
+        .top-bar {
+            background: var(--card-bg);
+            padding: 20px 25px; border-radius: 16px;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.08);
+        }
+        .user-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+        .badge-teacher { background: #ffd166; color: #0f172a; }
+        .badge-student { background: #00b4d8; color: #0f172a; }
+        
+        /* TEACHER DROPDOWN PANEL */
+        .teacher-panel {
+            display: none;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .btn-teacher-toggle {
+            background: rgba(255, 209, 102, 0.15);
+            color: var(--accent-yellow);
+            border: 1px dashed var(--accent-yellow);
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+        .btn-teacher-toggle:hover {
+            background: rgba(255, 209, 102, 0.25);
+        }
+        .teacher-tools-menu {
+            display: none;
+            background: var(--card-bg);
+            border: 1px solid var(--accent-yellow);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .btn-teacher {
+            background: var(--accent-yellow); color: #0f172a;
+            padding: 8px 14px; border: none; border-radius: 6px;
+            font-size: 0.82rem; font-weight: 700; cursor: pointer;
+        }
+        .btn-logout {
+            background: #ef4444; color: white; padding: 8px 16px;
+            border: none; border-radius: 8px; cursor: pointer; font-weight: 600;
+        }
+        
+        /* WEEKS TABS */
+        .weeks-container {
+            display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px;
+        }
+        .week-btn {
+            flex: 1; background: #0f172a; color: var(--text-muted);
+            padding: 12px; border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 0.9rem;
+            text-align: center; transition: 0.3s; white-space: nowrap;
+        }
+        .week-btn.active {
+            background: var(--accent-blue); color: #0f172a; border-color: var(--accent-blue);
+        }
+        
+        /* DAYS TABS */
+        .days-tabs {
+            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 20px;
+        }
+        .tab-btn {
+            background: var(--card-bg); color: var(--text-muted);
+            padding: 10px 18px; border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.85rem;
+            white-space: nowrap; transition: 0.2s;
+        }
+        .tab-btn.active {
+            background: var(--accent-blue); color: #0f172a; border-color: var(--accent-blue);
+        }
+        
+        /* SESSION CONTENT & SLIDES */
+        .day-content { display: none; }
+        .day-content.active { display: block; }
+        .slide-card {
+            background: var(--card-bg); padding: 30px; border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.08); min-height: 420px;
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .slide { display: none; }
+        .slide.active { display: block; }
+        .slide-header {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px; margin-bottom: 20px;
+        }
+        .slide-header h3 { color: var(--accent-blue); font-size: 1.25rem; }
+        .badge { background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; color: var(--accent-yellow); }
+        .box { background: #0f172a; padding: 20px; border-radius: 12px; margin-top: 15px; font-size: 0.95rem; line-height: 1.6; }
+        
+        /* NAV BUTTONS & PROGRESS */
+        .slide-nav {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        .btn-nav {
+            background: #334155; color: white; padding: 10px 20px;
+            border: none; border-radius: 8px; cursor: pointer; font-weight: 600;
+        }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+        .btn-nav.next { background: var(--accent-blue); color: #0f172a; }
+        .progress-bar-container {
+            width: 100%; height: 6px; background: #334155; border-radius: 10px; margin-bottom: 20px; overflow: hidden;
+        }
+        .progress-fill { height: 100%; background: var(--accent-blue); width: 14.28%; transition: 0.3s; }
+        
+        /* TIMER STYLING */
+        .timer-display { font-size: 2.5rem; font-weight: 800; color: var(--accent-yellow); text-align: center; margin: 15px 0; }
+        .timer-btns { text-align: center; }
+        .btn-timer { background: var(--accent-blue); border: none; padding: 8px 15px; border-radius: 6px; font-weight: 600; cursor: pointer; margin: 3px; }
+        
+        /* MEDIA & RECORDING UI */
+        .script-box { background: #0f172a; padding: 15px; border-radius: 8px; margin: 10px 0; display: none; }
+        .btn-action { background: #334155; color: #fff; padding: 8px 14px; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem; margin-top: 10px; }
+        .recorder-box { text-align: center; padding: 20px; background: #0f172a; border-radius: 12px; margin-top: 15px; }
+        .btn-record { background: #ef4444; color: white; padding: 10px 20px; border: none; border-radius: 30px; font-weight: 700; cursor: pointer; margin: 5px; }
+        
+        /* MULTIPLE RECORDINGS LIST */
+        .recordings-list { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+        .recording-item {
+            background: #1e293b; padding: 10px 15px; border-radius: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid rgba(255,255,255,0.08); flex-wrap: wrap; gap: 10px;
+        }
+        .recording-item span { font-size: 0.85rem; font-weight: 600; color: var(--accent-yellow); }
+        .btn-delete-single {
+            background: #dc2626; color: white; border: none;
+            padding: 6px 12px; border-radius: 6px; font-size: 0.8rem;
+            font-weight: 600; cursor: pointer; transition: 0.2s;
+        }
+        .btn-delete-single:hover { background: #b91c1c; }
+    </style>
+</head>
+<body>
+    <!-- LOGIN SCREEN -->
+    <div class="login-card" id="loginCard">
+        <h2>⚡ Souhaila's Fluency Portal</h2>
+        <p>Welcome back! Enter your login details.</p>
+        
+        <div class="input-group">
+            <label>Email Address</label>
+            <input type="email" id="email" placeholder="name@example.com">
+        </div>
+        
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" id="password" placeholder="••••••••">
+        </div>
+        <button class="btn-login" id="btnLogin">Access Dashboard 🚀</button>
+        <p class="error-msg" id="errorMsg"></p>
+    </div>
+    <!-- MAIN DASHBOARD -->
+    <div class="dashboard" id="dashboard">
+        
+        <div class="top-bar">
+            <div>
+                <h2 style="color:var(--accent-blue)">
+                    <span id="welcomeName">Welcome!</span> 
+                    <span id="roleBadge" class="user-badge"></span>
+                </h2>
+                <p id="weekSubtitle" style="font-size:0.85rem; color:var(--text-muted)">Week 1 — Intensive Speaking & Fluency Program</p>
+            </div>
+            <button class="btn-logout" id="btnLogout">Logout</button>
+        </div>
+        
+        <!-- TEACHER CONTROL PANEL DROPDOWN -->
+        <div class="teacher-panel" id="teacherPanel">
+            <button class="btn-teacher-toggle" onclick="toggleTeacherTools()">
+                👑 Teacher Tools ▾
+            </button>
+            <div class="teacher-tools-menu" id="teacherToolsMenu">
+                <button class="btn-teacher" onclick="alert('Feature: Add New Slide')">➕ Add New Slide</button>
+                <button class="btn-teacher" onclick="alert('Feature: Manage Homework / Audio Recordings')">🎙️ View Student Audio Records</button>
+                <button class="btn-teacher" onclick="alert('Feature: Edit Schedule')">📅 Update Schedule</button>
+            </div>
+        </div>
+        <!-- WEEKS SELECTOR -->
+        <div class="weeks-container">
+            <button class="week-btn active" onclick="switchWeek(1, this)">🗓️ Week 1</button>
+            <button class="week-btn" onclick="switchWeek(2, this)">🗓️ Week 2</button>
+            <button class="week-btn" onclick="switchWeek(3, this)">🗓️ Week 3</button>
+            <button class="week-btn" onclick="switchWeek(4, this)">🗓️ Week 4</button>
+        </div>
+        <!-- DAYS TABS MENU -->
+        <div class="days-tabs" id="daysTabsMenu">
+            <button class="tab-btn active" onclick="switchDay('day1', this)"> (Day 1 - 1H)</button>
+            <button class="tab-btn" onclick="switchDay('day2', this)"> (Day 2 - 30M)</button>
+            <button class="tab-btn" onclick="switchDay('day3', this)"> (Day 3 - 1H)</button>
+            <button class="tab-btn" onclick="switchDay('day4', this)"> (Day 4 - 30M)</button>
+            <button class="tab-btn" onclick="switchDay('day5', this)"> (Day 5 - 1H)</button>
+            <button class="tab-btn" style="border-color:var(--accent-yellow); color:var(--accent-yellow);" onclick="switchDay('weekend', this)">🎧 Weekend Mission</button>
+        </div>
+        
+        <!-- DAY 1 CONTENT (7 SLIDES FLOW) -->
+        <div id="day1" class="day-content active">
+            <div class="progress-bar-container">
+                <div class="progress-fill" id="progressFill1"></div>
+            </div>
+            <div class="slide-card">
+                <!-- SLIDE 1 -->
+                <div class="slide active">
+                    <div class="slide-header">
+                        <h3>1️⃣ Pronunciation: Short /ɪ/ vs Long /iː/</h3>
+                        <span class="badge">Slide 1 of 7</span>
+                    </div>
+                    <div class="box" style="font-size: 0.9rem; line-height: 1.7;">
+                        <div style="margin-bottom: 10px;">
+                            <span style="color: #22c55e;">🟢</span> <strong>Green:</strong> Short /ɪ/ | 
+                            <span style="color: #38bdf8;">🔵</span> <strong>Blue:</strong> Long /iː/ | 
+                            <span style="color: #f59e0b;">🟠</span> <strong>Orange:</strong> Connected Speech
+                        </div>
+                        <hr style="border: 0; border-top: 1px solid #334155; margin: 10px 0;">
+                        <strong>1️⃣ "Tim bit a big piece of sweet peach."</strong><br>
+                        <span style="color: #22c55e;">🟢</span> Tim, bit, big<br>
+                        <span style="color: #38bdf8;">🔵</span> piece, sweet, peach<br>
+                        <span style="color: #f59e0b;">🟠</span> <em>bit a</em> ➔ (bi-ta) | <em>piece of</em> ➔ (pie-sov)<br><br>
+                        <strong>2️⃣ "Six slim women see six green beans."</strong><br>
+                        <span style="color: #22c55e;">🟢</span> Six, slim, women, six<br>
+                        <span style="color: #38bdf8;">🔵</span> see, green, beans<br>
+                        <span style="color: #f59e0b;">🟠</span> <em>slim women</em> ➔ (slim-women) | <em>green beans</em> ➔ (no pause)<br><br>
+                        <strong>3️⃣ "Steve will fill the green tin with clean beans."</strong><br>
+                        <span style="color: #22c55e;">🟢</span> will, fill, tin, with<br>
+                        <span style="color: #38bdf8;">🔵</span> Steve, green, clean, beans<br>
+                        <span style="color: #f59e0b;">🟠</span> <em>will fill</em> ➔ (will-fill) | <em>fill the</em> ➔ (fil-tha)
+                    </div>
+                </div>
+                <!-- SLIDE 2: LISTENING ACTIVITY -->
+                <div class="slide">
+                    <div class="slide-header">
+                        <h3>2️⃣ Listening & Summarizing Activity</h3>
+                        <span class="badge">Slide 2 of 7</span>
+                    </div>
+                    <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:15px;">
+                        🎧 <strong>Instructions:</strong> Listen carefully to the video below (1 - 2 mins). After listening, summarize the main points in your own words.
+                    </p>
+                    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 12px; border: 1px solid #334155; margin-bottom: 15px;">
+                        <iframe 
+                            src="video_2026-07-21_04-35-02.mp4" 
+                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                    <div class="box" style="font-size: 0.9rem; line-height: 1.6;">
+                        <h4 style="color:var(--accent-yellow); margin-bottom:8px;">✍️ Summary Task</h4>
+                        <p>Prepare your short summary to share orally or write down key takeaways!</p>
+                    </div>
+                </div>
+                <!-- SLIDE 3 -->
+                <div class="slide">
+                    <div class="slide-header">
+                        <h3>3️⃣ Picture Description</h3>
+                        <span class="badge">Slide 3 of 7</span>
+                    </div>
+                    <div style="text-align:center; margin-bottom:15px;">
+                        <img src="Capture....PNG" alt="Lesson Picture" style="max-width:100%; max-height:220px; border-radius:10px; border:1px solid #334155; margin:0 auto; display:block;">
+                    </div>
+                    <div class="box" style="font-size: 1.05rem; line-height: 1.8;">
+                        <h4 style="color:var(--accent-blue); margin-bottom:8px; font-size:1.15rem;">📚 Vocabulary & Chunks</h4>
+                        <p><strong>Key Words:</strong><br>
+                        <span style="color:var(--text-muted)">Nouns:</span> woman, man, business person, suit, building<br>
+                        <span style="color:var(--text-muted)">Adjectives:</span> formal, black, smiley<br>
+                        <span style="color:var(--text-muted)">Verbs:</span> wear, hold, talk</p>
+                        <p style="margin-top:10px;"><strong>Speculation Phrases:</strong><br>
+                        <span style="color:var(--accent-yellow)">🟣</span> ... might be ...<br>
+                        <span style="color:var(--accent-yellow)">🟣</span> It looks like ...<br>
+                        <span style="color:var(--accent-yellow)">🟣</span> Judging by [their facial expressions / the environment], they seem to ...<br>
+                        <span style="color:var(--accent-yellow)">🟣</span> I get the impression that ...</p>
+                        <p style="margin-top:10px;"><strong>Description & Signposting Chunks:</strong><br>
+                        <span style="color:var(--accent-green)">🟧</span> In the foreground,...<br>
+                        <span style="color:var(--accent-green)">🟧</span> In the background,...<br>
+                        <span style="color:var(--accent-green)">🟧</span> On the left / right side,...<br>
+                        <span style="color:var(--accent-green)">🟧</span> At a closer look,...</p>
+                    </div>
+                </div>
+                <!-- SLIDE 4 -->
+                <div class="slide">
+                    <div class="slide-header">
+                        <h3>4️⃣ The 4-3-2 Speed Technique</h3>
+                        <span class="badge">Slide 4 of 7</span>
+                    </div>
+                    <p style="color:var(--text-muted); font-size:0.9rem;">Topic: "Talk about a successful project or a time you persuaded someone."</p>
+                    <div class="timer-display" id="timer">04:00</div>
+                    <div class="timer-btns">
+                        <button class="btn-timer" onclick="startTimer(240)">Round 1 (4 Mins)</button>
+                        <button class="btn-timer" onclick="startTimer(180)">Round 2 (3 Mins)</button>
+                        <button class="btn-timer" onclick="startTimer(120)">Round 3 (2 Mins)</button>
+                        <button class="btn-timer" style="background:#ef4444; color:white;" onclick="resetTimer()">Reset</button>
+                    </div>
+                </div>
+                <!-- SLIDE 5 -->
+                <div class="slide">
+                    <div class="slide-header">
+                        <h3>5️⃣ Guided Chunk Challenge</h3>
+                        <span class="badge">Slide 5 of 7</span>
+                    </div>
+                    <div class="box" style="font-size: 0.85rem; line-height: 1.6;">
+                        <h4 style="color:var(--accent-blue); margin-bottom:12px; font-size:0.95rem;">📚 Part A: Concept & Full Examples</h4>
+                        <p style="margin-bottom:10px;"><strong style="color:var(--accent-yellow)">1️⃣ Advanced Collocations</strong></p>
+                        <div style="margin-bottom:8px;">
+                            🔹 <strong>bridge the gap</strong><br>
+                            <span style="color:var(--text-muted); font-size:0.8rem;">Definition: To reduce or connect the division between two things or groups.</span><br>
+                            💡 <em>Example:</em> "We need to bridge the gap between our plan and what the team is actually doing."
+                        </div>
+                        <div style="margin-bottom:8px;">
+                            🔹 <strong>reach a compromise</strong><br>
+                            <span style="color:var(--text-muted); font-size:0.8rem;">Definition: To reach an agreement where both sides make concessions.</span><br>
+                            💡 <em>Example:</em> "After two hours of discussion, we finally managed to reach a compromise."
+                        </div>
+                        <div style="margin-bottom:8px;">
+                            🔹 <strong>make a sound decision</strong><br>
+                            <span style="color:var(--text-muted); font-size:0.8rem;">Definition: To make a sensible, reliable, and well-thought-out choice.</span><br>
+                            💡 <em>Example:</em> "To make a sound decision, you have to analyze all the data first."
+                        </div>
+                        <div style="margin-bottom:12px;">
+                            🔹 <strong>address the root cause</strong><br>
+                            <span style="color:var(--text-muted); font-size:0.8rem;">Definition: To find and fix the fundamental source of a problem rather than just the symptoms.</span><br>
+                            💡 <em>Example:</em> "Instead of fixing small errors, we must address the root cause of the problem."
+                        </div>
+                        <hr style="border:0; border-top:1px solid #334155; margin:12px 0;">
+                        <p style="margin-bottom:10px;"><strong style="color:var(--accent-yellow)">2️⃣ Semi-Fixed Expressions / Sentence Frames </strong></p>
+                        <div style="margin-bottom:8px;">
+                            🌟 <strong>The main reason why... is that...</strong><br>
+                            💡 <em>Example:</em> "The main reason why our sales dropped is that we didn't market the product well."
+                        </div>
+                        <div style="margin-bottom:8px;">
+                            🟣 <strong>When it comes to..., I strongly believe that...</strong><br>
+                            💡 <em>Example:</em> "When it comes to team productivity, I strongly believe that clear communication is key."
+                        </div>
+                        <div style="margin-bottom:8px;">
+                            🟣 <strong>The way I see it, the key factor here is...</strong><br>
+                            💡 <em>Example:</em> "The way I see it, the key factor here is how fast we adapt to changes."
+                        </div>
+                    </div>
+                </div>
+                <!-- SLIDE 6 -->
+                <div class="slide">
+                    <div class="slide-header">
+                        <h3>6️⃣ The Rapid Swap (Substitution Drill)</h3>
+                        <span class="badge">Slide 6 of 7</span>
+                    </div>
+                    <div class="box" style="font-size: 0.85rem; line-height: 1.7;">
+                        <h4 style="color:var(--accent-green); margin-bottom:10px;">⚡️ Your Turn:</h4>
+                        <p><strong>🔹 Frame 1: The main reason why... is that...</strong><br>
+                        • Give me a sentence using the frame about why you woke up late.<br>
+                        • Give me a sentence using the frame about why you bought a new phone.</p>
+                        <p style="margin-top:10px;"><strong>🔹 Frame 2: When it comes to..., I strongly believe that...</strong><br>
+                        • Give me a sentence using the frame about learning languages.<br>
+                        • Give me a sentence using the frame about working from home vs. the office.</p>
+                        <p style="margin-top:10px;"><strong>🔹 Frame 3: The way I see it, the key factor here is...</strong><br>
+                        • Give me a sentence using the frame about choosing a good restaurant.<br>
+                        • Give me a sentence using the frame about saving money for the future.</p>
+                    </div>
+                </div>
+                <!-- SLIDE 7 -->
+                <div class="slide">
+                    <div class="slide-header">
+                        <h3>7️⃣ Free Talk & Extension</h3>
+                        <span class="badge">Slide 7 of 7</span>
+                    </div>
+                    <div class="box">
+                        <strong>Extended Question:</strong><br><br>
+                        <em>"If you could travel anywhere tomorrow for a 1-week break from work, where would you go, with whom, and what's the first thing you'd do?"</em>
+                    </div>
+                </div>
+                <!-- SLIDE NAVIGATION FOR DAY 1 -->
+                <div class="slide-nav">
+                    <button class="btn-nav" id="prevBtn1" onclick="changeSlide(1, -1)" disabled>❮ Previous</button>
+                    <button class="btn-nav next" id="nextBtn1" onclick="changeSlide(1, 1)">Next ❯</button>
+                </div>
+            </div>
+        </div>
+        <!-- DAY 2 CONTENT (SUNDAY 30M SESSION - 2 SLIDES) -->
+        <div id="day2" class="day-content">
+            <div class="progress-bar-container">
+                <div class="progress-fill" id="progressFill2" style="width: 50%;"></div>
+            </div>
+            <div class="slide-card">
+                <!-- DAY 2 SLIDE 1: SHORT STORY -->
+                <div class="slide active">
+                    <div class="slide-header">
+                        <h3 id="d2-title">📖 Reading & Context: The Case Study</h3>
+                        <span class="badge" style="color:var(--accent-blue);">Slide 1 of 2</span>
+                    </div>
+                    <div class="box" style="font-size: 0.95rem; line-height: 1.8;">
+                        <h4 style="color:var(--accent-yellow); margin-bottom:12px;">📖 Read the story and observe how all chunks work together:</h4>
+                        <p style="font-style: italic; background: #071a21; padding: 20px; border-radius: 10px; border-left: 4px solid var(--accent-yellow);">
+                            "Last year, our team was facing a huge dilemma at work. <strong>When it comes to</strong> launched projects, <strong>I strongly believe that</strong> clear communication is everything. However, we had communication gaps that posed a challenge to our deadline.<br><br>
+                            <strong>The main reason why</strong> our project was delayed <strong>is that</strong> we failed to <strong>address the root cause</strong> early on. <strong>The way I see it, the key factor here</strong> was that no one took the time to smooth out the differences between the departments.<br><br>
+                            Thankfully, we had a quick meeting to <strong>bridge the gap</strong>. After some discussion, we managed to <strong>reach a compromise</strong> and <strong>make a sound decision</strong> to adjust our workflow. Now, everything is running smoothly!"
+                        </p>
+                    </div>
+                </div>
+                <!-- DAY 2 SLIDE 2: 10 COMPREHENSION & DISCUSSION QUESTIONS -->
+                <div class="slide">
+                    <div class="slide-header">
+                        <h3>🗣️ 10 Deep Discussion & Practice Questions</h3>
+                        <span class="badge" style="color:var(--accent-blue);">Slide 2 of 2</span>
+                    </div>
+                    <div class="box" style="font-size: 0.85rem; line-height: 1.6; max-height: 380px; overflow-y: auto;">
+                        <h4 style="color:var(--accent-blue); margin-bottom:12px;">Answer the following questions using target chunks:</h4>
+                        <ol style="padding-left: 18px;">
+                            <li style="margin-bottom: 12px;">
+                                <strong>What was the primary conflict mentioned in the story?</strong><br>
+                                <span style="color: var(--text-muted); font-size:0.8rem;">💡 Frame requirement: Use <em>"The main reason why..."</em></span>
+                            </li>
+                            <li style="margin-bottom: 12px;">
+                                <strong>What was the critical mistake the team made at the beginning?</strong><br>
+                                <span style="color: var(--text-muted); font-size:0.8rem;">💡 Target Chunk: <em>"address the root cause"</em></span>
+                            </li>
+                            <li style="margin-bottom: 12px;">
+                                <strong>According to the narrator, what is the most vital element in project launches?</strong><br>
+                                <span style="color: var(--text-muted); font-size:0.8rem;">💡 Frame requirement: Use <em>"When it comes to..., I strongly believe that..."</em></span>
+                            </li>
+                            <li style="margin-bottom: 12px;">
+                                <strong>How did the team resolve the conflict between departments?</strong><br>
+                                <span style="color: var(--text-muted); font-size:0.8rem;">💡 Target Chunks: <em>"bridge the gap"</em> & <em>"reach a compromise"</em></span>
+                            </li>
+                            <li style="margin-bottom: 12px;">
+                                <strong>In your opinion, what makes a decision a "sound decision" in business?</strong><br>
+                                <span style="color: var(--text-muted); font-size:0.8rem;">💡 Frame requirement: Use <em>"The way I see it, the key factor here is..."</em></span>
+                            </li>
+                            <li style="margin-bottom: 12px;">
+                                <strong>Recall a time at work/study when you had to "bridge the gap" between two conflicting opinions. What happened?</strong>
+                            </li>
+                            <li style="margin-bottom: 12px;">
+                                <strong>Why do many teams treat symptoms of a problem rather than "addressing the root cause"?</strong>
+                            </li>
+                            <li style="margin-bottom: 12px;">
+                                <strong>Is it always easy to "reach a compromise"? What should you do if someone refuses to compromise?</strong>
+                            </li>
+                            <li style="margin-bottom: 12px;">
+                                <strong>"When it comes to career success, I strongly believe that consistency beats talent." — Do you agree or disagree with this statement? Explain.</strong>
+                            </li>
+                            <li style="margin-bottom: 12px;">
+                                <strong>"The way I see it, the key factor to improving fluency is speaking without fear of making mistakes." — How do you work on this personally?</strong>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+                <!-- SLIDE NAVIGATION FOR DAY 2 -->
+                <div class="slide-nav">
+                    <button class="btn-nav" id="prevBtn2" onclick="changeSlide(2, -1)" disabled>❮ Previous</button>
+                    <button class="btn-nav next" id="nextBtn2" onclick="changeSlide(2, 1)">Next ❯</button>
+                </div>
+            </div>
+        </div>
+        <!-- DAY 3 CONTENT (MON AUG 3 - 1 HOUR SESSION) -->
+        <div id="day3" class="day-content">
+            <div class="progress-bar-container">
+                <div class="progress-fill" id="progressFill3" style="width: 14.28%;"></div>
+            </div>
+            <div class="slide-card">
+                <!-- SLIDE 1 -->
+                <div class="slide active">
+                    <div class="slide-header">
+                        <h3>1️⃣ Pronunciation: Unvoiced /θ/ vs Voiced /ð/</h3>
+                        <span class="badge">Slide 1 of 7</span>
+                    </div>
+                    <div class="box" style="font-size: 0.9rem; line-height: 1.7;">
+                        <div style="margin-bottom: 10px;">
+                            <span style="color: #22c55e;">🟢</span> <strong>Green:</strong> Unvoiced /θ/ | 
+                            <span style="color: #38bdf8;">🔵</span> <strong>Blue:</strong> Voiced /ð/ | 
+                            <span style="color: #f59e0b;">🟠</span> <strong>Orange:</strong> Connected Speech
+                        </div>
+                        <hr style="border: 0; border-top: 1px solid #334155; margin: 10px 0;">
+                        <strong>1️⃣ "Thirty thin thieves thought three thousand thoughts."</strong><br>
+                        <span style="color: #22c55e;">🟢</span> Thirty, thin, thieves, thought, three, thousand, thoughts<br>
+                        <span style="color: #38bdf8;">🔵</span> (No voiced /ð/ in this sentence)<br>
+                        <span style="color: #f59e0b;">🟠</span> <em>thirty thin</em> ➔ (thir-ty-thin) | <em>three thousand</em> ➔ (three-thou-sand)<br><br>
+                        
+                        <strong>2️⃣ "Their mother and father live together with them."</strong><br>
+                        <span style="color: #22c55e;">🟢</span> (No unvoiced /θ/ in this sentence)<br>
+                        <span style="color: #38bdf8;">🔵</span> Their, mother, father, together, with, them<br>
+                        <span style="color: #f59e0b;">🟠</span> <em>mother and</em> ➔ (mo-ther-and) | <em>with them</em> ➔ (wi-them - assimilation/merging)<br><br>
+                        
+                        <strong>3️⃣ "They think those three brothers went there together."</strong><br>
+                        <span style="color: #22c55e;">🟢</span> think, three<br>
+                        <span style="color: #38bdf8;">🔵</span> They, those, brothers, there, together<br>
+                        <span style="color: #f59e0b;">🟠</span> <em>think those</em> ➔ (think-those) | <em>went there</em> ➔ (wen-there - dropping the /t/)
+                    </div>
+                </div>
+                <!-- SLIDE 2: LISTENING ACTIVITY -->
+                <div class="slide">
+                    <div class="slide-header">
+                        <h3>2️⃣ Listening & Summarizing Activity</h3>
+                        <span class="badge">Slide 2 of 7</span>
+                    </div>
+                    <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:15px;">
+                        🎧 <strong>Instructions:</strong> Listen carefully to the video below (1 - 2 mins). After listening, summarize the main points in your own words.
+                    </p>
+                    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 12px; border: 1px solid #334155; margin-bottom: 15px;">
+                        <iframe 
+                            src="video_2026-07-21_04-35-01.mp4" 
+                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                    <div class="box" style="font-size: 0.9rem; line-height: 1.6;">
+                        <h4 style="color:var(--accent-yellow); margin-bottom:8px;">✍️ Summary Task</h4>
+                        <p>Prepare your short summary to share orally or write down key takeaways!</p>
+                    </div>
+                </div>
+                <!-- SLIDE 3 -->
+                <div class="slide">
+                    <div class="slide-header">
+                        <h3>3️⃣ Picture Description</h3>
+                        <span class="badge">Slide 3 of 7</span>
+                    </div>
+                    <div style="text-align:center; margin-bottom:15px;">
+                        <img src="Capture...2.PNG" alt="Lesson Picture" style="max-width:100%; max-height:220px; border-radius:10px; border:1px solid #334155; margin:0 auto; display:block;">
+                    </div>
+                    <div class="box" style="font-size: 1.05rem; line-height: 1.8;">
+                        <h4 style="color:var(--accent-blue); margin-bottom:8px; font-size:1.15rem;">📚 Vocabulary & Chunks</h4>
+                        <p><strong>Key Words:</strong><br>
+                        <span style="color:var(--text-muted)">Nouns:</span> birthday cake, party hat, fountain candle, face paint, park<br>
+                        <span style="color:var(--text-muted)">Adjectives:</span> excited, car-shaped, colorful, outdoor, cheerful<br>
+                        <span style="color:var(--text-muted)">Verbs:</span> celebrate, clap, cheer, blow out, gather</p>
+                        
+                        <p style="margin-top:10px;"><strong>Speculation Phrases:</strong><br>
+                        <span style="color:var(--accent-yellow)">🟣</span> ... might be celebrating a ...<br>
+                        <span style="color:var(--accent-yellow)">🟣</span> It looks like a ...<br>
+                        <span style="color:var(--accent-yellow)">🟣</span> Judging by their facial expressions and face paint, they seem to be ...<br>
+                        <span style="color:var(--accent-yellow)">🟣</span> I get the impression that ...</p>
+                        
+                        <p style="margin-top:10px;"><strong>Description & Signposting Chunks:</strong><br>
+                        <span style="color:var(--accent-green)">🟧</span> In the foreground, there is a ...<br>
+                        <span style="color:var(--accent-green)">🟧</span> In the background, ...<br>
+                        <span style="color:var(--accent-green)">🟧</span> On the left side, a little girl is ...<br>
+                        <span style="color:var(--accent-green)">🟧</span> At a closer look, you can see bright ...</p>
+                    </div>
+                </div>
+                <!-- SLIDE 4 -->
+                <div class="slide">
+                    <div class="slide-header">
+                        <h3>4️⃣ The 4-3-2 Speed Technique</h3>
+                        <span class="badge">Slide 4 of 7</span>
+                    </div>
+                    <p style="color:var(--text-muted); font-size:0.9rem;">Topic: "Talk about how you balance your work (or studies) with your personal life."</p>
+                    <div class="timer-display" id="timer3">04:00</div>
+                    <div class="timer-btns">
+                        <button class="btn-timer" onclick="startTimer3(240)">Round 1 (4 Mins)</button>
+                        <button class="btn-timer" onclick="startTimer3(180)">Round 2 (3 Mins)</button>
+                        <button class="btn-timer" onclick="startTimer3(120)">Round 3 (2 Mins)</button>
+                        <button class="btn-timer" style="background:#ef4444; color:white;" onclick="resetTimer3()">Reset</button>
+                    </div>
+                </div>
+                <!-- SLIDE 5 -->
+                <div class="slide">
+                    <div class="slide-header">
+                        <h3>5️⃣ Guided Chunk Challenge</h3>
+                        <span class="badge">Slide 5 of 7</span>
+                    </div>
+                    <div class="box" style="font-size: 0.85rem; line-height: 1.6;">
+                        <h4 style="color:var(--accent-blue); margin-bottom:12px; font-size:0.95rem;">📚 Part A: Concept & Full Examples</h4>
+                        <p style="margin-bottom:10px;"><strong style="color:var(--accent-yellow)">1️⃣ Verb-Preposition Combinations / Fixed Phrases</strong></p>
+                        
+                        <div style="margin-bottom:8px;">
+                            🔹 <strong>at the expense of...</strong><br>
+                            <span style="color:var(--text-muted); font-size:0.8rem;">Definition: Done in a way that harms or sacrifices something else.</span><br>
+                            💡 <em>Example:</em> "You shouldn't focus entirely on your career at the expense of your health."
+                        </div>
+                        <div style="margin-bottom:8px;">
+                            🔹 <strong>out of hand</strong><br>
+                            <span style="color:var(--text-muted); font-size:0.8rem;">Definition: Out of control or impossible to manage.</span><br>
+                            💡 <em>Example:</em> "If workload gets out of hand, you need to speak with your manager immediately."
+                        </div>
+                        <div style="margin-bottom:8px;">
+                            🔹 <strong>on a regular basis</strong><br>
+                            <span style="color:var(--text-muted); font-size:0.8rem;">Definition: Happening frequently and with consistent routines.</span><br>
+                            💡 <em>Example:</em> "Taking short breaks on a regular basis helps keep your focus sharp."
+                        </div>
+                        <div style="margin-bottom:12px;">
+                            🔹 <strong>cater to...</strong><br>
+                            <span style="color:var(--text-muted); font-size:0.8rem;">Definition: To provide what is needed or wanted by a particular group or situation.</span><br>
+                            💡 <em>Example:</em> "Modern companies should cater to the needs of employees who want remote work options."
+                        </div>
+                        
+                        <hr style="border:0; border-top:1px solid #334155; margin:12px 0;">
+                        <p style="margin-bottom:10px;"><strong style="color:var(--accent-yellow)">2️⃣ Semi-Fixed Expressions / Sentence Frames</strong></p>
+                        <div style="margin-bottom:8px;">
+                            🌟 <strong>From my perspective, the most effective way to... is...</strong><br>
+                            💡 <em>Example:</em> "From my perspective, the most effective way to avoid burnout is setting clear boundaries."
+                        </div>
+                        <div style="margin-bottom:8px;">
+                            💜 <strong>It goes without saying that...</strong><br>
+                            💡 <em>Example:</em> "It goes without saying that working 12 hours a day will harm your productivity."
+                        </div>
+                        <div style="margin-bottom:8px;">
+                            💜 <strong>As far as I'm concerned, ... plays a huge role in ...</strong><br>
+                            💡 <em>Example:</em> "As far as I'm concerned, time management plays a huge role in reducing daily stress."
+                        </div>
+                    </div>
+                </div>
+                <!-- SLIDE 6 -->
+                <div class="slide">
+                    <div class="slide-header">
+                        <h3>6️⃣ The Rapid Swap (Substitution Drill)</h3>
+                        <span class="badge">Slide 6 of 7</span>
+                    </div>
+                    <div class="box" style="font-size: 0.85rem; line-height: 1.7;">
+                        <h4 style="color:var(--accent-green); margin-bottom:10px;">⚡ Your Turn:</h4>
+                        
+                        <p><strong>🔹 Frame 1: From my perspective, the most effective way to... is...</strong><br>
+                        • Give me a sentence using the frame about managing work stress.<br>
+                        • Give me a sentence using the frame about learning a new skill quickly.</p>
+                        
+                        <p style="margin-top:10px;"><strong>🔹 Frame 2: It goes without saying that...</strong><br>
+                        • Give me a sentence using the frame about getting enough sleep every night.<br>
+                        • Give me a sentence using the frame about taking regular breaks during study or work.</p>
+                        
+                        <p style="margin-top:10px;"><strong>🔹 Frame 3: As far as I'm concerned, ... plays a huge role in ...</strong><br>
+                        • Give me a sentence using the frame about communication in a team.<br>
+                        • Give me a sentence using the frame about discipline in reaching personal goals.</p>
+                    </div>
+                </div>
+                <!-- SLIDE 7 -->
+                <div class="slide">
+                    <div class="slide-header">
+                        <h3>7️⃣ Free Talk & Extension</h3>
+                        <span class="badge">Slide 7 of 7</span>
+                    </div>
+                    <div class="box">
+                        <strong>💬 Extended Question:</strong><br><br>
+                        <em>"If you were given a full paid month off work/studies starting tomorrow, with no obligations at all, how would you spend it and why?"</em>
+                    </div>
+                </div>
+                <!-- SLIDE NAVIGATION FOR DAY 3 -->
+                <div class="slide-nav">
+                    <button class="btn-nav" id="prevBtn3" onclick="changeSlide(3, -1)" disabled>❮ Previous</button>
+                    <button class="btn-nav next" id="nextBtn3" onclick="changeSlide(3, 1)">Next ❯</button>
+                </div>
+            </div>
+        </div>
+        <!-- OTHER DAYS PLACEHOLDERS -->
+        <div id="day4" class="day-content"><div class="slide-card"><h3 id="d4-title">📅  (Day 4 - 30 Mins Session)</h3><p>Session content coming soon...</p></div></div>
+        <div id="day5" class="day-content"><div class="slide-card"><h3 id="d5-title">📅  (Day 5 - 1 Hour Session)</h3><p>Session content coming soon...</p></div></div>
+        <!-- WEEKEND MISSION -->
+        <div id="weekend" class="day-content">
+            <div class="slide-card">
+                <div class="slide-header">
+                    <h3 id="weekend-title" style="color:var(--accent-yellow)">🎧 Weekend Mission (Thu - Fri): Listening, Dictation & Shadowing</h3>
+                    <span class="badge" style="color:#fff;">Self-Study</span>
+                </div>
+                
+                <p style="font-size:0.9rem; color:var(--text-muted)">Watch/Listen 3 times, practice Dictation, then record your voice below.</p>
+                <div style="text-align:center; margin-top:15px;">
+                    <iframe width="100%" height="220" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Listening Video" frameborder="0" allowfullscreen style="border-radius:12px;"></iframe>
+                </div>
+                <button class="btn-action" onclick="toggleScript()">👁️ Show / Hide Script</button>
+                <div class="script-box" id="scriptBox">
+                    <p style="font-size:0.85rem; color:#cbd5e1;">"Success in business isn't about being the smartest person in the room. It's about being the most adaptable and clearest communicator."</p>
+                </div>
+                <!-- MULTIPLE VOICE RECORDERS ENGINE -->
+                <div class="recorder-box">
+                    <p style="font-size:0.85rem; margin-bottom:10px;">🎙️ Record your Shadowing performance:</p>
+                    <button class="btn-record" id="recordBtn" onclick="toggleRecording()">🎙️ Start Recording</button>
+                    
+                    <!-- قائمة الريكوردات المسجلة -->
+                    <div class="recordings-list" id="recordingsList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- FIREBASE SDKs & AUTH ENGINE -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+      import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+      import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+      import { getStorage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+      // Firebase Config
+      const firebaseConfig = {
+        apiKey: "AIzaSyB7EqAxiFrVlF5gXuOr2l9-0jMcLtDp1Tg",
+        authDomain: "fluency-portal-fe8b8.firebaseapp.com",
+        projectId: "fluency-portal-fe8b8",
+        storageBucket: "fluency-portal-fe8b8.firebasestorage.app",
+        messagingSenderId: "885170185327",
+        appId: "1:885170185327:web:4b31cdca54b94f072a999a",
+        measurementId: "G-RBH1G38N6V"
+      };
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      const storage = getStorage(app);
+      // Event listener for Login button
+      document.getElementById('btnLogin').addEventListener('click', async () => {
+          const email = document.getElementById('email').value.trim();
+          const password = document.getElementById('password').value.trim();
+          const err = document.getElementById('errorMsg');
+          const btn = document.getElementById('btnLogin');
+          if (!email || !password) {
+              err.textContent = "Please enter both Email and Password!";
+              err.style.display = 'block';
+              return;
+          }
+          try {
+              btn.disabled = true;
+              btn.textContent = "Signing in...";
+              err.style.display = 'none';
+              // Firebase Sign In
+              await signInWithEmailAndPassword(auth, email, password);
+          } catch (error) {
+              console.error("Auth Error Code:", error.code);
+              let msg = "Invalid email or password!";
+              if(error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') {
+                  msg = "Wrong password or email!";
+              } else if(error.code === 'auth/user-not-found') {
+                  msg = "User not found on Firebase!";
+              } else if(error.code === 'auth/invalid-email') {
+                  msg = "Please write a valid email format!";
+              }
+              err.textContent = msg;
+              err.style.display = 'block';
+          } finally {
+              btn.disabled = false;
+              btn.textContent = "Access Dashboard 🚀";
+          }
+      });
+      // Event listener for Logout button
+      document.getElementById('btnLogout').addEventListener('click', () => {
+          signOut(auth).then(() => {
+              showLoginScreen();
+          }).catch((error) => {
+              console.error("Logout Error:", error);
+          });
+      });
+      // Auto Check Auth State
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          showDashboard(user);
+        } else {
+          showLoginScreen();
+        }
+      });
+    </script>
+    <script>
+        function showDashboard(user) {
+            document.getElementById('loginCard').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            document.body.style.alignItems = 'flex-start';
+            
+            const email = user.email.toLowerCase();
+            const isTeacher = email.includes("teacher") || email.includes("admin");
+            
+            let displayName = user.displayName;
+            if (!displayName) {
+                if (email === "huda@fluencyportal.com") {
+                    displayName = "Huda";
+                } else if (email === "ahmedezz@fluencyportal.com") {
+                    displayName = "Ahmed Ezz";
+                } else {
+                    displayName = email.split('@')[0];
+                }
+            }
+            
+            document.getElementById('welcomeName').textContent = `Welcome, ${displayName}! 👋`;
+            const badge = document.getElementById('roleBadge');
+            const teacherPanel = document.getElementById('teacherPanel');
+            if (isTeacher) {
+                badge.textContent = "👑 Teacher / Admin";
+                badge.className = "user-badge badge-teacher";
+                teacherPanel.style.display = 'block';
+            } else {
+                badge.textContent = "🎓 Learner";
+                badge.className = "user-badge badge-student";
+                teacherPanel.style.display = 'none';
+            }
+            updateSlideUI(1);
+            updateSlideUI(3);
+        }
+        function toggleTeacherTools() {
+            const menu = document.getElementById('teacherToolsMenu');
+            menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+        }
+        function showLoginScreen() {
+            document.getElementById('loginCard').style.display = 'block';
+            document.getElementById('dashboard').style.display = 'none';
+            document.body.style.alignItems = 'center';
+            document.getElementById('errorMsg').style.display = 'none';
+            document.getElementById('email').value = '';
+            document.getElementById('password').value = '';
+        }
+        // DATES MAPPING
+        let currentWeekNum = 1;
+        const calendarDates = {
+            1: {
+                d1: " (Day 1 - 1H)",
+                d2: " (Day 2 - 30M)",
+                d3: " (Day 3 - 1H)",
+                d4: " (Day 4 - 30M)",
+                d5: " (Day 5 - 1H)",
+                weekend: "🎧 Weekend Mission (Thu - Fri)",
+                h3_d3: "📅  (Day 3 - 1 Hour Session)",
+                h3_d4: "📅  (Day 4 - 30 Mins Session)",
+                h3_d5: "📅  (Day 5 - 1 Hour Session)",
+                h3_weekend: "🎧 Weekend Mission (Thu - Fri): Listening, Dictation & Shadowing"
+            },
+            2: {
+                d1: " (Day 1 - 1H)",
+                d2: " (Day 2 - 30M)",
+                d3: " (Day 3 - 1H)",
+                d4: " (Day 4 - 30M)",
+                d5: " (Day 5 - 1H)",
+                weekend: "🎧 Weekend Mission (Thu - Fri)",
+                h3_d3: "📅  (Day 3 - 1 Hour Session)",
+                h3_d4: "📅  (Day 4 - 30 Mins Session)",
+                h3_d5: "📅  (Day 5 - 1 Hour Session)",
+                h3_weekend: "🎧 Weekend Mission (Thu - Fri): Listening, Dictation & Shadowing"
+            },
+            3: {
+                d1: " (Day 1 - 1H)",
+                d2: " (Day 2 - 30M)",
+                d3: " (Day 3 - 1H)",
+                d4: " (Day 4 - 30M)",
+                d5: " (Day 5 - 1H)",
+                weekend: "🎧 Weekend Mission (Thu - Fri)",
+                h3_d3: "📅  (Day 3 - 1 Hour Session)",
+                h3_d4: "📅  (Day 4 - 30 Mins Session)",
+                h3_d5: "📅  (Day 5 - 1 Hour Session)",
+                h3_weekend: "🎧 Weekend Mission (Thu - Fri): Listening, Dictation & Shadowing"
+            },
+            4: {
+                d1: " (Day 1 - 1H)",
+                d2: " (Day 2 - 30M)",
+                d3: " (Day 3 - 1H)",
+                d4: " (Day 4 - 30M)",
+                d5: " (Day 5 - 1H)",
+                weekend: "🎧 Weekend Mission (Thu - Fri)",
+                h3_d3: "📅  (Day 3 - 1 Hour Session)",
+                h3_d4: "📅  (Day 4 - 30 Mins Session)",
+                h3_d5: "📅  (Day 5 - 1 Hour Session)",
+                h3_weekend: "🎧 Weekend Mission (Thu - Fri): Listening, Dictation & Shadowing"
+            }
+        };
+        function switchWeek(weekNum, btn) {
+            currentWeekNum = weekNum;
+            document.querySelectorAll('.week-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            document.getElementById('daysTabsMenu').style.display = 'flex';
+            document.getElementById('weekSubtitle').textContent = `Week ${weekNum} — Intensive Speaking & Fluency Program`;
+            
+            const tabs = document.querySelectorAll('.days-tabs .tab-btn');
+            const dates = calendarDates[weekNum];
+            if (dates) {
+                tabs[0].textContent = dates.d1;
+                tabs[1].textContent = dates.d2;
+                tabs[2].textContent = dates.d3;
+                tabs[3].textContent = dates.d4;
+                tabs[4].textContent = dates.d5;
+                tabs[5].textContent = dates.weekend;
+                
+                document.getElementById('d3-title').textContent = dates.h3_d3;
+                document.getElementById('d4-title').textContent = dates.h3_d4;
+                document.getElementById('d5-title').textContent = dates.h3_d5;
+                document.getElementById('weekend-title').textContent = dates.h3_weekend;
+            }
+            switchDay('day1', tabs[0]);
+        }
+        function switchDay(dayId, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            if(btn) btn.classList.add('active');
+            document.querySelectorAll('.day-content').forEach(d => d.classList.remove('active'));
+            document.getElementById(dayId).classList.add('active');
+        }
+        // SLIDES NAVIGATION ENGINE
+        let currentSlideDay1 = 0;
+        let currentSlideDay2 = 0;
+        let currentSlideDay3 = 0;
+        function changeSlide(dayNum, direction) {
+            if (dayNum === 1) {
+                const slides = document.querySelectorAll('#day1 .slide');
+                slides[currentSlideDay1].classList.remove('active');
+                currentSlideDay1 += direction;
+                slides[currentSlideDay1].classList.add('active');
+                updateSlideUI(1);
+            } else if (dayNum === 2) {
+                const slides = document.querySelectorAll('#day2 .slide');
+                slides[currentSlideDay2].classList.remove('active');
+                currentSlideDay2 += direction;
+                slides[currentSlideDay2].classList.add('active');
+                updateSlideUI(2);
+            } else if (dayNum === 3) {
+                const slides = document.querySelectorAll('#day3 .slide');
+                slides[currentSlideDay3].classList.remove('active');
+                currentSlideDay3 += direction;
+                slides[currentSlideDay3].classList.add('active');
+                updateSlideUI(3);
+            }
+        }
+        function updateSlideUI(dayNum) {
+            if (dayNum === 1) {
+                const total = document.querySelectorAll('#day1 .slide').length;
+                document.getElementById('prevBtn1').disabled = (currentSlideDay1 === 0);
+                document.getElementById('nextBtn1').disabled = (currentSlideDay1 === total - 1);
+                document.getElementById('progressFill1').style.width = ((currentSlideDay1 + 1) / total * 100) + '%';
+            } else if (dayNum === 2) {
+                const total = document.querySelectorAll('#day2 .slide').length;
+                document.getElementById('prevBtn2').disabled = (currentSlideDay2 === 0);
+                document.getElementById('nextBtn2').disabled = (currentSlideDay2 === total - 1);
+                document.getElementById('progressFill2').style.width = ((currentSlideDay2 + 1) / total * 100) + '%';
+            } else if (dayNum === 3) {
+                const total = document.querySelectorAll('#day3 .slide').length;
+                document.getElementById('prevBtn3').disabled = (currentSlideDay3 === 0);
+                document.getElementById('nextBtn3').disabled = (currentSlideDay3 === total - 1);
+                document.getElementById('progressFill3').style.width = ((currentSlideDay3 + 1) / total * 100) + '%';
+            }
+        }
+        // TIMER ENGINE DAY 1
+        let timerInterval;
+        function startTimer(seconds) {
+            clearInterval(timerInterval);
+            let time = seconds;
+            const display = document.getElementById('timer');
+            timerInterval = setInterval(() => {
+                let mins = Math.floor(time / 60);
+                let secs = time % 60;
+                display.textContent = `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+                if (time <= 0) {
+                    clearInterval(timerInterval);
+                    display.textContent = "00:00 - Time's Up!";
+                }
+                time--;
+            }, 1000);
+        }
+        function resetTimer() {
+            clearInterval(timerInterval);
+            document.getElementById('timer').textContent = "04:00";
+        }
+        // TIMER ENGINE DAY 3
+        let timerInterval3;
+        function startTimer3(seconds) {
+            clearInterval(timerInterval3);
+            let time = seconds;
+            const display = document.getElementById('timer3');
+            timerInterval3 = setInterval(() => {
+                let mins = Math.floor(time / 60);
+                let secs = time % 60;
+                display.textContent = `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+                if (time <= 0) {
+                    clearInterval(timerInterval3);
+                    display.textContent = "00:00 - Time's Up!";
+                }
+                time--;
+            }, 1000);
+        }
+        function resetTimer3() {
+            clearInterval(timerInterval3);
+            document.getElementById('timer3').textContent = "04:00";
+        }
+        function toggleScript() {
+            const box = document.getElementById('scriptBox');
+            box.style.display = box.style.display === 'block' ? 'none' : 'block';
+        }
+        // MULTIPLE AUDIO RECORDERS ENGINE
+        let mediaRecorder;
+        let audioChunks = [];
+        let isRecording = false;
+        let recordingCount = 0;
+        async function toggleRecording() {
+            const btn = document.getElementById('recordBtn');
+            if (!isRecording) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+                    mediaRecorder.ondataavailable = event => {
+                        audioChunks.push(event.data);
+                    };
+                    mediaRecorder.onstop = () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                        const audioUrl = URL.createObjectURL(audioBlob);
+                        recordingCount++;
+                        addRecordingToList(audioUrl, recordingCount);
+                    };
+                    mediaRecorder.start();
+                    isRecording = true;
+                    btn.textContent = "⏹️ Stop Recording";
+                    btn.style.background = "#22c55e";
+                } catch (err) {
+                    alert("Microphone access denied or not supported.");
+                }
+            } else {
+                mediaRecorder.stop();
+                isRecording = false;
+                btn.textContent = "🎙️ Record Another Take";
+                btn.style.background = "#ef4444";
+            }
+        }
+        function addRecordingToList(url, count) {
+            const list = document.getElementById('recordingsList');
+            const item = document.createElement('div');
+            item.className = 'recording-item';
+            
+            item.innerHTML = `
+                <span>Take #${count}</span>
+                <audio controls src="${url}" style="height:36px; max-width:220px;"></audio>
+                <button class="btn-delete-single" onclick="this.parentElement.remove()">🗑️ Delete</button>
+            `;
+            
+            list.appendChild(item);
+        }
+    </script>
+</body>
+</html>
